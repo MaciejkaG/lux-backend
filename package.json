@@ -60,6 +60,7 @@
     "qs": "^6.13.0",
     "range-parser": "^1.2.1",
     "raw-body": "^2.5.2",
+    "redis": "^4.7.0",
     "safe-buffer": "^5.2.1",
     "safer-buffer": "^2.1.2",
     "send": "^0.19.0",
@@ -74,7 +75,8 @@
     "type-is": "^1.6.18",
     "unpipe": "^1.0.0",
     "utils-merge": "^1.0.1",
-    "vary": "^1.1.2"
+    "vary": "^1.1.2",
+    "ws": "^8.18.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
