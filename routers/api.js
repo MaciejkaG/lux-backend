@@ -106,4 +106,24 @@ router.post("/friends/add", requiresAuth(), async (req, res) => {
     );
 });
 
+router.post("/friends/remove", requiresAuth(), async (req, res) => {
+    const friendPubId = req.body?.friend_public_id;
+
+    if (!friendPubId || typeof friendPubId !== "string" || friendPubId.length !== 36) {
+        return res.status(400).send("Bad friend username");
+    }
+
+    try {
+        await id.removeFriend(req.user.sub, friendPubId);
+    } catch (err) {
+        switch (err.message) {
+            case "Friend not found":
+                return res.status(404).send("Friend not found");
+
+            default:
+                return res.status(500).send("Unknown error occured");
+        }
+    }
+});
+
 export default { startingPath: "/api", router }; // Passing the starting path of the router here.

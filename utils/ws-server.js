@@ -182,8 +182,6 @@ export default async function initWS(server) {
             setPresence(false, "");
         });
     });
-
-    console.log("WebSocket server running on ws://localhost:8080");
 }
 
 async function auth(req) {

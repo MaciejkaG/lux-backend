@@ -76,6 +76,32 @@ export default class Id {
         }
 
         const friendData = await this.getUser(friendSub);
-        return { success: true, message: "Friend request sent", friend: friendData };
+        return {
+            success: true,
+            message: "Friend request sent",
+            friend: friendData,
+        };
+    }
+
+    async removeFriend(userSub, friendPubId) {
+        // Check if the friend exists
+        const [friendResult] = await this.pool.query(
+            "SELECT user_id FROM users WHERE public_id = ?;",
+            [friendPubId]
+        );
+
+        if (friendResult.length === 0) {
+            throw new Error("Friend not found");
+        }
+
+        const friendSub = friendResult[0].user_id;
+
+        // Remove or revoke friendship
+        await this.pool.query(
+            "DELETE FROM friendships WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?);",
+            [userSub, friendSub, friendSub, userSub]
+        );
+
+        return { success: true, message: "Friend removed or request revoked" };
     }
 }
