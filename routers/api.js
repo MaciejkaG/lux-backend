@@ -48,13 +48,13 @@ const requiresAuth = () => async (req, res, next) => {
         return res
             .status(401)
             .send("Invalid token provided in Authorization header");
-    } finally {
-        // If the JWT is correct, but signed for another app
-        if (payload?.appId !== process.env.AUTH_APP_ID) {
-            return res
-                .status(401)
-                .send("Invalid token provided in Authorization header");
-        }
+    }
+
+    // If the JWT is correct, but signed for another app
+    if (payload?.appId !== process.env.AUTH_APP_ID) {
+        return res
+            .status(401)
+            .send("Invalid token provided in Authorization header");
     }
 
     // Assign subject to the request
@@ -130,6 +130,8 @@ router.post("/friends/remove", requiresAuth(), async (req, res) => {
                 return res.status(500).send("Unknown error occured");
         }
     }
+
+    res.sendStatus(200);
 });
 
 // Game library fetching
