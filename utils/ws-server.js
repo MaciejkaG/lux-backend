@@ -187,6 +187,7 @@ export default async function initWS(server) {
 async function auth(req) {
     const authHeader = req.headers["authorization"];
     let jwt;
+
     if (authHeader && authHeader.startsWith("Bearer ")) {
         jwt = authHeader.substring(7, authHeader.length);
     } else {

@@ -1,6 +1,7 @@
 import { jwtVerify } from "jose";
 import redis from "../clients/redis.js";
 import Id from "../utils/id.js";
+import LuxDB from "../utils/lux-db.js";
 
 import express from "express";
 const router = express.Router();
@@ -18,11 +19,19 @@ const id = new Id({
     database: process.env.IDDB_DATABASE,
 });
 
+const luxDb = new LuxDB({
+    host: process.env.LUXDB_HOST,
+    user: process.env.LUXDB_USER,
+    password: process.env.LUXDB_PASSWORD,
+    database: process.env.LUXDB_DATABASE,
+});
+// TODO: Add this user in .env
+
 const requiresAuth = () => async (req, res, next) => {
     const authHeader = req.headers["authorization"];
     let jwt;
     // Check if JWT was provided in the Authorization header.
-    if (authHeader.startsWith("Bearer ")) {
+    if (authHeader && authHeader.startsWith("Bearer ")) {
         jwt = authHeader.substring(7, authHeader.length);
     } else {
         return res
@@ -94,9 +103,6 @@ router.post("/friends/add", requiresAuth(), async (req, res) => {
     res.sendStatus(201);
 
     const userData = await id.getUser(req.user.sub);
-    console.log(
-        `${process.env.REDIS_PREFIX}:user_notifications:${result.friend.public_id}`
-    );
     await redis.publish(
         `${process.env.REDIS_PREFIX}:user_notifications:${result.friend.public_id}`,
         JSON.stringify({
@@ -124,6 +130,22 @@ router.post("/friends/remove", requiresAuth(), async (req, res) => {
                 return res.status(500).send("Unknown error occured");
         }
     }
+});
+
+// Game library fetching
+router.get("/apps", requiresAuth(), async (req, res) => {
+    const apps = await luxDb.getLibrary();
+    res.send(apps);
+});
+
+router.get("/apps/:appId", requiresAuth(), async (req, res) => {
+    const app = await luxDb.getApp(req.params.appId);
+
+    if (app === undefined) {
+        return res.status(404).send("App not found");
+    }
+
+    res.send(app);
 });
 
 export default { startingPath: "/api", router }; // Passing the starting path of the router here.
