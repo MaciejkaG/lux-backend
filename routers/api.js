@@ -135,12 +135,12 @@ router.post("/friends/remove", requiresAuth(), async (req, res) => {
 });
 
 // Game library fetching
-router.get("/apps", requiresAuth(), async (req, res) => {
+router.get("/apps", async (req, res) => {
     const apps = await luxDb.getLibrary();
     res.send(apps);
 });
 
-router.get("/apps/:appId", requiresAuth(), async (req, res) => {
+router.get("/apps/:appId", async (req, res) => {
     const app = await luxDb.getApp(req.params.appId);
 
     if (app === undefined) {
