@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 initWS(server);
 
-app.set("trust proxy", process.env.TRUST_PROXY === "true");
+app.set("trust proxy", process.env.TRUST_PROXY === "true" ? 1 : 0);
 
 // Use routers from ./routes
 fs.readdir(path.join(__dirname, "routers"), (err, files) => {
