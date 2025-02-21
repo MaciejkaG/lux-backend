@@ -65,6 +65,7 @@ const requiresAuth = () => async (req, res, next) => {
 };
 
 router.get("/users/me", requiresAuth(), async (req, res) => {
+    // FIXME: Timeout errors
     const user = await id.getUser(req.user.sub);
     res.send(user);
 });
