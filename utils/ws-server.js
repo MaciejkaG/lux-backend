@@ -85,7 +85,14 @@ export default async function initWS(server) {
 
         // Fetch current presence of friends and send it to the client
         const refreshFriendSubscriptions = async () => {
-            const { friendsList } = await id.getUserFriends(ws.sub);
+            let friendsList;
+            try {
+                ({ friendsList } = await id.getUserFriends(ws.sub));
+            } catch (err) {
+                if (err?.code === "ETIMEDOUT") {
+                    return;
+                }
+            }
             const newFriendIds = friendsList.map((f) => f.public_id);
 
             if (ws.subscribedFriends) {
