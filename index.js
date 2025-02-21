@@ -16,6 +16,8 @@ const app = express();
 const server = http.createServer(app);
 initWS(server);
 
+app.set("trust proxy", process.env.TRUST_PROXY === "true");
+
 // Use routers from ./routes
 fs.readdir(path.join(__dirname, "routers"), (err, files) => {
     files.forEach(async (file) => {
@@ -31,7 +33,7 @@ fs.readdir(path.join(__dirname, "routers"), (err, files) => {
 });
 
 // Start the server
-const port = parseInt(process.env.port ?? 3000);
+const port = parseInt(process.env.PORT ?? 3000);
 server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
